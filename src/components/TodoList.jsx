@@ -28,12 +28,11 @@ const initialState = {
   isDeleteModalOpen: false,
   idToDelete: null,
   isDarkThemeEnabled: false,
+  isAdding: false,
 }
 
 export default function TodoList() {
   const [state, setState] = useState(initialState);
-  const [isAdding, setIsAdding] = useState(false);
-  const [errorMsg, setErrorMsg] = useState('');
 
   const {
     formValues,
@@ -46,6 +45,7 @@ export default function TodoList() {
     isDeleteModalOpen,
     idToDelete,
     isDarkThemeEnabled,
+    isAdding,
   } = state;
   const { name, description, deadline } = formValues;
 
@@ -67,9 +67,19 @@ export default function TodoList() {
   }, [isDarkThemeEnabled])
 
   const handleAddingTask = () => {
-    setIsAdding(true);
-  }
+    setState((prevState) => ({
+      ...prevState,
+      isAdding: true,
+    }));
+  };
 
+  const setAddingTaskToFalse = () => {
+    setState((prevState) => ({
+      ...prevState,
+      isAdding: false,
+    }));
+  }
+ 
   const toggleTheme = () => {
     setState((prevState) => ({
       ...prevState,
@@ -79,7 +89,7 @@ export default function TodoList() {
 
   const handleCancel = (e) => {
     e.preventDefault();
-    setIsAdding(false);
+    setAddingTaskToFalse();
     setState((prevState) => ({
       ...prevState,
       formValues: {
@@ -122,11 +132,6 @@ export default function TodoList() {
 
   const hadnleUserSubmitForm = (e) => {
     e.preventDefault();
-    if (name.trim() === '' || description.trim() === '' || _.isNull(deadline)) {
-      setErrorMsg('Please fill all the inputs in the form')
-      return;
-    }
-    setErrorMsg('');
     const id = _.uniqueId();
     setState((prevState) => ({
       ...prevState,
@@ -137,9 +142,9 @@ export default function TodoList() {
       tasks: {
         ...prevState.tasks,
         [id]: {
-          name: prevState.formValues.name,
-          description: prevState.formValues.description,
-          deadline: prevState.formValues.deadline
+          name,
+          description,
+          deadline,
         }}
     }));
     setState((prevState) => ({
@@ -150,7 +155,7 @@ export default function TodoList() {
         deadline: null,
       }
     }));
-    setIsAdding(false);
+    setAddingTaskToFalse();
   };
 
   const handleMakingTaskDone = (id) => () => {
@@ -512,7 +517,6 @@ export default function TodoList() {
           handleUserPickingDeadline={handleUserPickingDeadline}
           formValues={formValues}
           handleUserSubmitForm={hadnleUserSubmitForm}
-          errorMsg={errorMsg}
           handleCancel={handleCancel} />
       }
       {mappingTypes[typeTasks]()}
