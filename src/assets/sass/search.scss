@@ -1,0 +1,20 @@
+.search {
+  display: inline-flex;
+  position: relative;
+
+  &__input {
+    padding: 0.3rem 2rem 0.3rem 0.3rem;
+    border-bottom: 1px solid var(--main-border-color);
+    outline: none;
+  }
+
+  &__icon {
+    position: absolute;
+    right: 0;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--main-color);
+    width: 25px;
+    height: 25px;
+  }
+}

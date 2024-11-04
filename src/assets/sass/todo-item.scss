@@ -1,0 +1,64 @@
+.todo-item {
+  display: flex;
+  align-items: center;
+  gap: 2rem;
+  padding: 1rem;
+
+  &__icon {
+    color: var(--main-color);
+    width: 25px;
+    height: 25px;
+  }
+
+  &__remove-btn {
+    margin-left: auto;
+  }
+
+  &__read-more {
+    font-size: 0.8rem;
+    color: grey;
+  }
+}
+
+.todo-item_finished {
+  animation: finished 0.25s ease-in-out forwards;
+  text-decoration: line-through;
+}
+
+.todo-item_finished .todo-item__icon {
+  color: #fff;
+}
+
+.todo-item_finished .todo-item__read-more {
+  color: #fff;
+}
+
+.todo-item_finished .checkbox__control {
+  border-color: #fff;
+}
+
+.todo-item_overdue {
+  background-color: lightcoral;
+  color: #fff;
+}
+
+.todo-item_overdue .todo-item__icon {
+  color: #fff;
+}
+
+.todo-item_overdue .todo-item__read-more {
+  color: #fff;
+}
+
+
+@keyframes finished {
+  from {
+    background-color: #fff;
+    color: #000;
+  }
+
+  to {
+    background-color: lightgreen;
+    color: #fff;
+  }
+}

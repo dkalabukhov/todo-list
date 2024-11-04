@@ -1,0 +1,13 @@
+:root {
+  --page-bg: #fff;
+  --main-color: #212427;
+  --main-border-color: #212427;
+  --modal-body-bg: #fff;
+}
+
+html[data-theme-dark] {
+  --page-bg: #1a1a27;
+  --main-color: #fff;
+  --main-border-color: #fff;
+  --modal-body-bg: #1a1a27;
+}

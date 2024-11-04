@@ -1,0 +1,17 @@
+.todo-list {
+  max-width: 900px;
+  margin: 0 auto;
+  position: relative;
+
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 1rem;
+
+  &__heading {
+    font-size: 2rem;
+    font-family: Poppins, sans-serif;
+    text-align: center;
+    margin-bottom: 1rem;
+  }
+}
