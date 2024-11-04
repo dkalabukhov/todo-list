@@ -1,4 +1,4 @@
-export default function ThemeChanger({ toggleTheme, isDarkThemeEnalbed}) {
+export default function ThemeChanger({ toggleTheme, isDarkThemeEnabled}) {
 
   return (
     <div className="theme-changer">
@@ -21,7 +21,7 @@ export default function ThemeChanger({ toggleTheme, isDarkThemeEnalbed}) {
             </clipPath>
             </defs>
           </svg>
-          <input onChange={toggleTheme} checked={isDarkThemeEnalbed} type="checkbox" className="toggler__input" name="toggler" />
+          <input onChange={toggleTheme} checked={isDarkThemeEnabled} type="checkbox" className="toggler__input" name="toggler" />
           <div className="toggler__state">
               <div className="toggler__control">
                   <div className="toggler__circle"></div>

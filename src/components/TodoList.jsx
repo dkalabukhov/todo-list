@@ -32,7 +32,11 @@ const initialState = {
 }
 
 export default function TodoList() {
-  const [state, setState] = useState(initialState);
+  const storedState = JSON.parse(localStorage.getItem('state'));
+
+  const stateToUse = _.isNull(storedState) ? initialState : storedState;
+
+  const [state, setState] = useState(stateToUse);
 
   const {
     formValues,
@@ -52,6 +56,10 @@ export default function TodoList() {
   const isAnyTasks = _.keys(tasks).some((taskKey) => !_.isNull(tasks[taskKey]));
 
   useEffect(() => {
+    localStorage.setItem('state', JSON.stringify(state));
+  }, [state]);
+
+  useEffect(() => {
     const keys = _.keys(tasksUi);
     const isAnySelectedTasks = keys.some((key) => tasksUi[key]?.isSelected === true);
     if (isAnySelectedTasks) {
@@ -63,8 +71,10 @@ export default function TodoList() {
 
   useEffect(() => {
     const html = document.documentElement;
-    html.toggleAttribute('data-theme-dark');
-  }, [isDarkThemeEnabled])
+    isDarkThemeEnabled
+      ? html.setAttribute('data-theme-dark', '')
+      : html.removeAttribute('data-theme-dark');
+  }, [isDarkThemeEnabled]);
 
   const handleAddingTask = () => {
     setState((prevState) => ({
@@ -79,7 +89,7 @@ export default function TodoList() {
       isAdding: false,
     }));
   }
- 
+
   const toggleTheme = () => {
     setState((prevState) => ({
       ...prevState,
