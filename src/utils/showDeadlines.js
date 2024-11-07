@@ -17,9 +17,15 @@ const isTomorrowDeadline = (deadline) => {
 
 const isThisWeekDeadline = (deadline) => {
   dayjs.extend(isBetween);
+  dayjs.extend(isToday);
   const today = dayjs();
-  const thisWeek = today.add(6, 'day');
-  return dayjs(deadline).isBetween(today, thisWeek, 'day', '[]');
+  const todayDayOfWeek = today.get('day');
+  if (todayDayOfWeek === 0) {
+    return dayjs(deadline).isToday();
+  }
+  const endOfTheWeekDay = 7 - todayDayOfWeek;
+  const endOfTheWeek = dayjs().add(endOfTheWeekDay, 'day');
+  return dayjs(deadline).isBetween(today, endOfTheWeek, 'day', '[]');
 };
 
 export { showAllDeadlines, isTodayDeadline, isTomorrowDeadline, isThisWeekDeadline };
