@@ -53,12 +53,16 @@ export default function TodoList() {
   } = state;
   const { name, description, deadline } = formValues;
 
+  // Перменная, которая хранит в себе булево значение: есть ли хотя бы один таск,
+  // значение которого не равно null.
   const isAnyTasks = _.keys(tasks).some((taskKey) => !_.isNull(tasks[taskKey]));
 
+  // При каждом изменении state сохраняем данные в localStorage
   useEffect(() => {
     localStorage.setItem('state', JSON.stringify(state));
   }, [state]);
 
+  // Хук проверяет, есть ли хотя бы один выбранный таск и по условию меняет state
   useEffect(() => {
     const keys = _.keys(tasksUi);
     const isAnySelectedTasks = keys.some((key) => tasksUi[key]?.isSelected === true);
@@ -69,6 +73,7 @@ export default function TodoList() {
     }
   }, [tasksUi]);
 
+  // Хук меняет тему при изменении соответствующего значения в state
   useEffect(() => {
     const html = document.documentElement;
     isDarkThemeEnabled
@@ -76,6 +81,7 @@ export default function TodoList() {
       : html.removeAttribute('data-theme-dark');
   }, [isDarkThemeEnabled]);
 
+  // Функция, меняющая в state значение isAdding на true - флаг добавления задачи
   const handleAddingTask = () => {
     setState((prevState) => ({
       ...prevState,
@@ -83,6 +89,7 @@ export default function TodoList() {
     }));
   };
 
+  // Функция, меняющая в state значение isAdding на false - флаг добавления задачи
   const setAddingTaskToFalse = () => {
     setState((prevState) => ({
       ...prevState,
@@ -90,6 +97,7 @@ export default function TodoList() {
     }));
   }
 
+  // Функция, меняющая флаг темы в state
   const toggleTheme = () => {
     setState((prevState) => ({
       ...prevState,
@@ -97,7 +105,9 @@ export default function TodoList() {
     }));
   };
 
-  const handleCancel = (e) => {
+  // Функция, которая отменяет создание нового таска: меняет флаг
+  // isAdding на false и очищает форму
+  const handleCancelAddingTask = (e) => {
     e.preventDefault();
     setAddingTaskToFalse();
     setState((prevState) => ({
@@ -110,6 +120,7 @@ export default function TodoList() {
     }));
   }
 
+  // Функция, которая записывает в state значения из формы добавления нового таска
   const handleUserInput = (e) => {
     setState((prevState) => ({
       ...prevState,
@@ -120,6 +131,7 @@ export default function TodoList() {
     }));
   };
 
+  // Функция, которая добавляет в state значение дедлайна из формы добавления нового таска
   const handleUserPickingDeadline = (date) => {
     if (date) {
       setState((prevState) => ({
@@ -140,6 +152,8 @@ export default function TodoList() {
     }
   };
 
+  // Функция, которая создает новый таск, очищает инпуты, и ставит флагу isAdding
+  // значение false
   const hadnleUserSubmitForm = (e) => {
     e.preventDefault();
     const id = _.uniqueId();
@@ -168,6 +182,7 @@ export default function TodoList() {
     setAddingTaskToFalse();
   };
 
+  // Функция, которая помечает таск как выполненный
   const handleMakingTaskDone = (id) => () => {
     setState((prevState) => ({
       ...prevState,
@@ -181,6 +196,7 @@ export default function TodoList() {
     }));
   };
 
+  // Функция, которая удаляет таск и закрывает модальное окно
   const handleRemovingTask = () => {
     const id = idToDelete;
     setState((prevState) => ({
@@ -197,6 +213,7 @@ export default function TodoList() {
     handleCloseModal();
   };
 
+  // Функция, которая показывает модальное окно для удаления
   const handleOpenDeleteModal = (id) => () => {
     setState((prevState) => ({
       ...prevState,
@@ -205,6 +222,8 @@ export default function TodoList() {
     }));
   };
 
+  // Функция, которая устанавливает значение флага isEditing как true
+  // при клике на кнопку редактирования таска
   const handleEditingTask = (id) => () => {
     setState((prevState) => ({
       ...prevState,
@@ -218,6 +237,7 @@ export default function TodoList() {
     }));
   };
 
+  // Функция которая редактирует информацию таска и ставит флаг isEditing как false
   const handleEditingItem = (data, id) => {
     const { editName, editDescription, editDeadline} = data;
     setState((prevState) => ({
@@ -240,6 +260,7 @@ export default function TodoList() {
     }));
   };
 
+  // Функция, которая отменяет редактирование таска
   const handleCancelEditingItem = (id) => {
     setState((prevState) => ({
       ...prevState,
@@ -253,6 +274,7 @@ export default function TodoList() {
     }));
   };
 
+  // Функция, которая меняет в state тип выбранных задач: all, finished, unfinished
   const handleOptionChange = (e) => {
     setState((prevState) => ({
       ...prevState,
@@ -260,6 +282,7 @@ export default function TodoList() {
     }));
   };
 
+  // Функция, которая помечает таск как "выбранный"
   const handleSelectingTask = (id) => () => {
     setState((prevState) => ({
       ...prevState,
@@ -273,6 +296,7 @@ export default function TodoList() {
     }));
   };
 
+  // Функция, которая ставит флаг isSelectingMultipleTasks как true
   const changeStateSelectingMultipleTasksToTrue = () => {
     setState((prevState) => ({
       ...prevState,
@@ -280,6 +304,7 @@ export default function TodoList() {
     }));
   };
 
+  // Функция, которая ставит флаг isSelectingMultipleTasks как false
   const changeStateSelectingMultipleTasksToFalse = () => {
     setState((prevState) => ({
       ...prevState,
@@ -287,6 +312,9 @@ export default function TodoList() {
     }));
   };
 
+  // Объект для диспетчиризации по ключу (дэдлайны). Каждое значение ключа объекта - это
+  // функция, котора фильтрует таски по сроку дедлайна. Функции находядтся в папке utils и
+  // возвращают булево значение
   const mappingDeadlies = {
     all: (deadline) => showAllDeadlines(deadline),
     today: (deadline) => isTodayDeadline(deadline),
@@ -294,6 +322,7 @@ export default function TodoList() {
     thisWeek: (deadline) => isThisWeekDeadline(deadline),
   };
 
+  // Рендер всех тасков
   const renderAllItems = () => {
     const keys = _.keys(tasks);
     return keys.map((taskKey) => {
@@ -335,6 +364,7 @@ export default function TodoList() {
     });
   }
 
+  // Рендер только выполненных тасков
   const renderFinishedItems = () => {
     const keys = _.keys(tasks);
     return keys.map((taskKey) => {
@@ -377,6 +407,7 @@ export default function TodoList() {
     });
   }
 
+  // Рендер только не завершенных тасков
   const renderUnfinishedItems = () => {
     const keys = _.keys(tasks);
     return keys.map((taskKey) => {
@@ -420,6 +451,7 @@ export default function TodoList() {
     });
   };
 
+  // Функция записывает в state значения поля поиска по таскам
   const handleUserSearchInput = (e) => {
     setState((prevState) => ({
       ...prevState,
@@ -427,6 +459,7 @@ export default function TodoList() {
     }))
   };
 
+  // Функция записывает значения фильтра по дедлайнам в state
   const handleUserSelectDeadline = (value) => {
     setState((prevState) => ({
       ...prevState,
@@ -434,6 +467,7 @@ export default function TodoList() {
     }));
   };
 
+  // Функция помечает несколько тасков как выполненные
   const handleMarkingMultipleTasksDone = () => {
     const keys = _.keys(tasksUi);
     const idsToUpdate = keys.reduce((acc, key) => {
@@ -456,6 +490,7 @@ export default function TodoList() {
     });
   };
 
+  // Функция удаляет несколько тасков
   const handleDeletingMultipleTasks = () => {
     const keys = _.keys(tasksUi);
     const idsToDelete = keys.reduce((acc, key) => {
@@ -479,6 +514,7 @@ export default function TodoList() {
     });
   };
 
+  // Функция, которая закрывает модальное окно и ставит флагу idToDelete значение null
   const handleCloseModal = () => {
     setState((prevState) => ({
       ...prevState,
@@ -487,6 +523,8 @@ export default function TodoList() {
     }));
   }
 
+  // Объект для диспетчиризации по ключу: вызов функции рендеринга тасков в зависимости
+  // от выбранного типа тасков в state
   const mappingTypes = {
     all: renderAllItems,
     finished: renderFinishedItems,
@@ -527,7 +565,7 @@ export default function TodoList() {
           handleUserPickingDeadline={handleUserPickingDeadline}
           formValues={formValues}
           handleUserSubmitForm={hadnleUserSubmitForm}
-          handleCancel={handleCancel} />
+          handleCancelAddingTask={handleCancelAddingTask} />
       }
       {mappingTypes[typeTasks]()}
       {isDeleteModalOpen && <DeleteModal handleRemovingTask={handleRemovingTask} handleCloseModal={handleCloseModal} /> }

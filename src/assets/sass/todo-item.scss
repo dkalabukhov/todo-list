@@ -1,7 +1,8 @@
 .todo-item {
-  display: flex;
+  display: grid;
+  grid-template-columns: 160px 1fr 2fr 90px 120px;
   align-items: center;
-  gap: 2rem;
+  gap: 1rem;
   padding: 1rem;
 
   &__icon {
@@ -22,6 +23,13 @@
 
 .todo-item_finished {
   animation: finished 0.25s ease-in-out forwards;
+}
+
+.todo-item_finished .todo-item__grid-item {
+  text-decoration: line-through;
+}
+
+.todo-item_finished .todo-item__line-through {
   text-decoration: line-through;
 }
 
@@ -42,6 +50,10 @@
   color: #fff;
 }
 
+.todo-item_overdue .checkbox__control {
+  border-color: #fff;
+}
+
 .todo-item_overdue .todo-item__icon {
   color: #fff;
 }
@@ -58,7 +70,7 @@
   }
 
   to {
-    background-color: lightgreen;
+    background-color: #214921;
     color: #fff;
   }
 }

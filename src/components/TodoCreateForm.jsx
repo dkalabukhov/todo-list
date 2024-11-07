@@ -2,7 +2,7 @@ import { DatePicker } from "antd"
 import dayjs from "dayjs";
 import _ from 'lodash';
 
-export default function TodoCreateForm({ formValues, handleUserInput, handleUserPickingDeadline, handleUserSubmitForm, handleCancel }) {
+export default function TodoCreateForm({ formValues, handleUserInput, handleUserPickingDeadline, handleUserSubmitForm, handleCancelAddingTask }) {
   const { name, description, deadline } = formValues;
 
   const date = deadline ? dayjs(deadline) : null;
@@ -29,7 +29,7 @@ export default function TodoCreateForm({ formValues, handleUserInput, handleUser
             }}
             className="todo-form__date-picker" />
         </div>
-        <button type="submit" className="btn btn_submit" onClick={handleCancel}>Cancel</button>
+        <button type="submit" className="btn btn_submit" onClick={handleCancelAddingTask}>Cancel</button>
         <button disabled={submitDisabled} className="btn btn_submit" type="submit">Submit</button>
       </form>
     </div>

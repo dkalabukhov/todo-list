@@ -19,11 +19,11 @@ export default function TodoItem({ name, description, deadline, id, handleMaking
 
   return (
     <div className={todoItemClasses}>
-      <button className='btn btn_gap' onClick={handleMakingTaskDone(id)}>
+      <button className='btn btn_gap btn_flex-start todo-item__grid-item no-decoration' onClick={handleMakingTaskDone(id)}>
         {isFinished
           ?
             <>
-              <span className='no-decoration'>Make Unfinished</span>
+              <span>Make Unfinished</span>
               <svg className="todo-item__icon" viewBox="0 0 512 512" xmlSpace="preserve" xmlns="http://www.w3.org/2000/svg" xmlnsXlink="http://www.w3.org/1999/xlink">
                 <path d="M256,7C118.467,7,7,118.468,7,256.002C7,393.533,118.467,505,256,505s249-111.467,249-248.998  C505,118.468,393.533,7,256,7z M256,485.08c-126.31,0-229.08-102.771-229.08-229.078C26.92,129.692,129.69,26.92,256,26.92  c126.309,0,229.08,102.771,229.08,229.082C485.08,382.309,382.309,485.08,256,485.08z" fill="currentColor"/><polygon fill="currentColor" points="368.545,157.073 354.461,142.988 255.863,241.587 157.733,143.456 143.648,157.54 241.78,255.672   143.648,353.809 157.733,367.893 255.863,269.75 354.461,368.361 368.545,354.275 269.947,255.672 "/>
               </svg>
@@ -36,19 +36,18 @@ export default function TodoItem({ name, description, deadline, id, handleMaking
               </svg>
             </>
         }
-
       </button>
-      <span>{name}</span>
+      <span className='todo-item__grid-item'>{name}</span>
       {isDescriptionShown
       ? <button onClick={handleShowingDescription}>
-          <span>{description}</span> <span className='todo-item__read-more'>hide description</span>
+          <span className='todo-item__line-through'>{description}</span> <span className='todo-item__read-more'>hide description</span>
         </button>
       : <button onClick={handleShowingDescription}>
-          <span>{cuttedDescription}</span> <span className='todo-item__read-more'>show description</span>
+          <span className='todo-item__line-through'>{cuttedDescription}</span> <span className='todo-item__read-more'>show description</span>
         </button>
       }
-      <span>{deadline}</span>
-      <div className='buttons-group'>
+      <span className='todo-item__grid-item'>{deadline}</span>
+      <div className='buttons-group todo-item__grid-item'>
         <Checkbox isChecked={isChecked} id={id} handleSelectingTask={handleSelectingTask} />
         <button onClick={handleEditingTask(id)}>
           <svg className='todo-item__icon' fill="none" height="24" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" viewBox="0 0 24 24" width="24" xmlns="http://www.w3.org/2000/svg">
