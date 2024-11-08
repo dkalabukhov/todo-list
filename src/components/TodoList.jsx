@@ -161,7 +161,13 @@ export default function TodoList() {
       ...prevState,
       tasksUi: {
         ...prevState.tasksUi,
-        [id]: { isFinished: false, isEditing: false, isSelected: false, isRemoving: false }
+        [id]: {
+          isFinished: false,
+          isEditing: false,
+          isSelected: false,
+          isRemoving: false,
+          isDescriptionShown: false
+        },
       },
       tasks: {
         ...prevState.tasks,
@@ -226,6 +232,20 @@ export default function TodoList() {
       }
     }));
   }
+
+  // Переключает значение isDescriptionShown (открыто ли описание задачи) в state
+  const setIsDescriptionShown = (id) => () => {
+    setState((prevState) => ({
+      ...prevState,
+      tasksUi: {
+        ...prevState.tasksUi,
+        [id]: {
+          ...prevState.tasksUi[id],
+          isDescriptionShown: !prevState.tasksUi[id].isDescriptionShown,
+        },
+      },
+    }));
+  };
 
   // Функция, которая удаляет таск и закрывает модальное окно
   const handleRemovingTask = () => {
@@ -393,7 +413,9 @@ export default function TodoList() {
           handleMakingTaskDone={handleMakingTaskDone}
           handleOpenDeleteModal={handleOpenDeleteModal}
           handleEditingTask={handleEditingTask}
-          isRemoving={tasksUi[taskKey].isRemoving} />
+          isRemoving={tasksUi[taskKey].isRemoving}
+          isDescriptionShown={tasksUi[taskKey].isDescriptionShown}
+          setIsDescriptionShown={setIsDescriptionShown}  />
       )
     });
   }
@@ -437,7 +459,9 @@ export default function TodoList() {
           handleMakingTaskDone={handleMakingTaskDone}
           handleOpenDeleteModal={handleOpenDeleteModal}
           handleEditingTask={handleEditingTask}
-          isRemoving={tasksUi[taskKey].isRemoving} />
+          isRemoving={tasksUi[taskKey].isRemoving}
+          isDescriptionShown={tasksUi[taskKey].isDescriptionShown}
+          setIsDescriptionShown={setIsDescriptionShown}  />
       )
     });
   }
@@ -482,7 +506,9 @@ export default function TodoList() {
           isChecked={tasksUi[taskKey].isSelected}
           changeStateSelectingMultipleTasksToTrue={changeStateSelectingMultipleTasksToTrue}
           changeStateSelectingMultipleTasksToFalse={changeStateSelectingMultipleTasksToFalse}
-          isRemoving={tasksUi[taskKey].isRemoving} />
+          isRemoving={tasksUi[taskKey].isRemoving}
+          isDescriptionShown={tasksUi[taskKey].isDescriptionShown}
+          setIsDescriptionShown={setIsDescriptionShown}   />
       )
     });
   };

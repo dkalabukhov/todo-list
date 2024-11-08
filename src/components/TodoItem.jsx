@@ -1,20 +1,26 @@
 import cn from 'classnames';
-import { useState } from 'react';
 import dayjs from 'dayjs';
 import Checkbox from './Checkbox';
 
-export default function TodoItem({ name, description, deadline, id, handleMakingTaskDone, handleOpenDeleteModal, isFinished, handleEditingTask, handleSelectingTask, isChecked, isRemoving }) {
+export default function TodoItem({
+  name,
+  description,
+  deadline,
+  id,
+  handleMakingTaskDone,
+  handleOpenDeleteModal,
+  isFinished,
+  handleEditingTask,
+  handleSelectingTask,
+  isChecked,
+  isRemoving,
+  isDescriptionShown,
+  setIsDescriptionShown }) {
   const todoItemClasses = cn('todo-item', {
     'todo-item_finished': isFinished,
     'todo-item_overdue': deadline < dayjs().format('YYYY-MM-DD'),
     'todo-item_removing': isRemoving,
   })
-
-  const [isDescriptionShown, setIsDescriptionShown] = useState(false);
-
-  const handleShowingDescription = () => {
-    setIsDescriptionShown((value) => !value);
-  }
 
   const cuttedDescription = description.slice(0, 2) + '...';
 
@@ -40,10 +46,10 @@ export default function TodoItem({ name, description, deadline, id, handleMaking
       </button>
       <span className='todo-item__grid-item'>{name}</span>
       {isDescriptionShown
-      ? <button onClick={handleShowingDescription}>
+      ? <button onClick={setIsDescriptionShown(id)}>
           <span className='todo-item__line-through'>{description}</span> <span className='todo-item__read-more'>hide description</span>
         </button>
-      : <button onClick={handleShowingDescription}>
+      : <button onClick={setIsDescriptionShown(id)}>
           <span className='todo-item__line-through'>{cuttedDescription}</span> <span className='todo-item__read-more'>show description</span>
         </button>
       }
