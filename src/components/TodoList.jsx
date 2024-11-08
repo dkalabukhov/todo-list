@@ -594,43 +594,47 @@ export default function TodoList() {
   };
 
   return (
-    <div className="todo-list">
-      <h1 className="todo-list__heading">TODO-list</h1>
-      <ThemeChanger toggleTheme={toggleTheme} isDarkThemeEnabled={isDarkThemeEnabled} />
-      {isAnyTasks &&
-        <div className="filters">
-          <div className="radios">
-            <RadioButton handleOptionChange={handleOptionChange} name="radio" value="all" title="All" typeTasks={typeTasks} />
-            <RadioButton handleOptionChange={handleOptionChange} name="radio" value="finished" title="Finished" typeTasks={typeTasks} />
-            <RadioButton handleOptionChange={handleOptionChange} name="radio" value="unfinished" title="Not Finished" typeTasks={typeTasks} />
-          </div>
-          <SelectDeadline
-            selectedDeadline={selectedDeadline}
-            handleUserSelectDeadline={handleUserSelectDeadline} />
-          <SeacrhInput searchInput={searchInput} handleUserSearchInput={handleUserSearchInput} />
+    <>
+      <div className="todo-list">
+        <div className="todo-list__container">
+          <h1 className="todo-list__heading">TODO-list</h1>
+          <ThemeChanger toggleTheme={toggleTheme} isDarkThemeEnabled={isDarkThemeEnabled} />
+          {isAnyTasks &&
+            <div className="filters">
+              <div className="radios">
+                <RadioButton handleOptionChange={handleOptionChange} name="radio" value="all" title="All" typeTasks={typeTasks} />
+                <RadioButton handleOptionChange={handleOptionChange} name="radio" value="finished" title="Finished" typeTasks={typeTasks} />
+                <RadioButton handleOptionChange={handleOptionChange} name="radio" value="unfinished" title="Not Finished" typeTasks={typeTasks} />
+              </div>
+              <SelectDeadline
+                selectedDeadline={selectedDeadline}
+                handleUserSelectDeadline={handleUserSelectDeadline} />
+              <SeacrhInput searchInput={searchInput} handleUserSearchInput={handleUserSearchInput} />
+            </div>
+          }
+          {isSelectingMultipleTasks &&
+              <div className="buttons-group">
+                <button onClick={handleDeletingMultipleTasks} className="btn btn_submit btn_small">
+                  <span>Delete Selected</span>
+                </button>
+                <button onClick={handleMarkingMultipleTasksDone} className="btn btn_submit btn_small">
+                  <span>Mark Selected As Done</span>
+                </button>
+              </div>
+          }
+          <AddNewTaskButton isAdding={isAdding} handleAddingTask={handleAddingTask} />
+          {isAdding &&
+            <TodoCreateForm
+              handleUserInput={handleUserInput}
+              handleUserPickingDeadline={handleUserPickingDeadline}
+              formValues={formValues}
+              handleUserSubmitForm={hadnleUserSubmitForm}
+              handleCancelAddingTask={handleCancelAddingTask} />
+          }
+          {mappingTypes[typeTasks]()}
         </div>
-      }
-      {isSelectingMultipleTasks &&
-          <div className="buttons-group">
-            <button onClick={handleDeletingMultipleTasks} className="btn btn_submit btn_small">
-              <span>Delete Selected</span>
-            </button>
-            <button onClick={handleMarkingMultipleTasksDone} className="btn btn_submit btn_small">
-              <span>Mark Selected As Done</span>
-            </button>
-          </div>
-      }
-      <AddNewTaskButton isAdding={isAdding} handleAddingTask={handleAddingTask} />
-      {isAdding &&
-        <TodoCreateForm
-          handleUserInput={handleUserInput}
-          handleUserPickingDeadline={handleUserPickingDeadline}
-          formValues={formValues}
-          handleUserSubmitForm={hadnleUserSubmitForm}
-          handleCancelAddingTask={handleCancelAddingTask} />
-      }
-      {mappingTypes[typeTasks]()}
-      {isDeleteModalOpen && <DeleteModal handleRemovingTask={handleRemovingTask} handleCloseModal={handleCloseModal} /> }
-    </div>
+      </div>
+    {isDeleteModalOpen && <DeleteModal handleRemovingTask={handleRemovingTask} handleCloseModal={handleCloseModal} /> }
+    </>
   )
 }

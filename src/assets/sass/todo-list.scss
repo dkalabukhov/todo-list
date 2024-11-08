@@ -1,12 +1,14 @@
 .todo-list {
-  max-width: 900px;
-  margin: 0 auto;
-  position: relative;
+  &__container {
+    max-width: 900px;
+    margin: 0 auto;
+    position: relative;
 
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  gap: 1rem;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 1rem;
+  }
 
   &__heading {
     font-size: 2rem;

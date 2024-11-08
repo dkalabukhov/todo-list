@@ -25,11 +25,6 @@
   animation: finished 0.25s ease-in-out forwards;
 }
 
-.todo-item_finished {
-  background-color: #214921;
-  color: #fff;
-}
-
 .todo-item_finished .todo-item__grid-item {
   text-decoration: line-through;
 }
@@ -51,7 +46,7 @@
 }
 
 .todo-item_overdue {
-  background-color: lightcoral;
+  background-color: #5d0f0f;
   color: #fff;
 }
 
@@ -64,6 +59,11 @@
 }
 
 .todo-item_overdue .todo-item__read-more {
+  color: #fff;
+}
+
+.todo-item_finished {
+  background-color: #214921;
   color: #fff;
 }
 
