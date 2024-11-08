@@ -3,10 +3,11 @@ import { useState } from 'react';
 import dayjs from 'dayjs';
 import Checkbox from './Checkbox';
 
-export default function TodoItem({ name, description, deadline, id, handleMakingTaskDone, handleOpenDeleteModal, isFinished, handleEditingTask, handleSelectingTask, isChecked }) {
+export default function TodoItem({ name, description, deadline, id, handleMakingTaskDone, handleOpenDeleteModal, isFinished, handleEditingTask, handleSelectingTask, isChecked, isRemoving }) {
   const todoItemClasses = cn('todo-item', {
     'todo-item_finished': isFinished,
-    'todo-item_overdue': deadline < dayjs().format('YYYY-MM-DD')
+    'todo-item_overdue': deadline < dayjs().format('YYYY-MM-DD'),
+    'todo-item_removing': isRemoving,
   })
 
   const [isDescriptionShown, setIsDescriptionShown] = useState(false);

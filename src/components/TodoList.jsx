@@ -161,7 +161,7 @@ export default function TodoList() {
       ...prevState,
       tasksUi: {
         ...prevState.tasksUi,
-        [id]: { isFinished: false, isEditing: false, isSelected: false }
+        [id]: { isFinished: false, isEditing: false, isSelected: false, isRemoving: false }
       },
       tasks: {
         ...prevState.tasks,
@@ -196,21 +196,38 @@ export default function TodoList() {
     }));
   };
 
-  // Функция, которая удаляет таск и закрывает модальное окно
-  const handleRemovingTask = () => {
+  // Функция помечает таск как удаляемый
+  const markTaskAsRemoving = () => {
     const id = idToDelete;
     setState((prevState) => ({
       ...prevState,
       tasksUi: {
         ...prevState.tasksUi,
-        [id]: null,
-      },
-      tasks: {
-        ...prevState.tasks,
-        [id]: null,
+        [id]: {
+          ...prevState.tasksUi[id],
+          isRemoving: true,
+        }
       }
     }));
+  }
+
+  // Функция, которая удаляет таск и закрывает модальное окно
+  const handleRemovingTask = () => {
+    const id = idToDelete;
     handleCloseModal();
+    markTaskAsRemoving();
+    setTimeout(() =>
+      setState((prevState) => ({
+        ...prevState,
+        tasksUi: {
+          ...prevState.tasksUi,
+          [id]: null,
+        },
+        tasks: {
+          ...prevState.tasks,
+          [id]: null,
+        }
+      })), 500);
   };
 
   // Функция, которая показывает модальное окно для удаления
@@ -359,7 +376,8 @@ export default function TodoList() {
           changeStateSelectingMultipleTasksToFalse={changeStateSelectingMultipleTasksToFalse}
           handleMakingTaskDone={handleMakingTaskDone}
           handleOpenDeleteModal={handleOpenDeleteModal}
-          handleEditingTask={handleEditingTask} />
+          handleEditingTask={handleEditingTask}
+          isRemoving={tasksUi[taskKey].isRemoving} />
       )
     });
   }
@@ -402,7 +420,8 @@ export default function TodoList() {
           changeStateSelectingMultipleTasksToFalse={changeStateSelectingMultipleTasksToFalse}
           handleMakingTaskDone={handleMakingTaskDone}
           handleOpenDeleteModal={handleOpenDeleteModal}
-          handleEditingTask={handleEditingTask} />
+          handleEditingTask={handleEditingTask}
+          isRemoving={tasksUi[taskKey].isRemoving} />
       )
     });
   }
@@ -446,7 +465,8 @@ export default function TodoList() {
           handleSelectingTask={handleSelectingTask}
           isChecked={tasksUi[taskKey].isSelected}
           changeStateSelectingMultipleTasksToTrue={changeStateSelectingMultipleTasksToTrue}
-          changeStateSelectingMultipleTasksToFalse={changeStateSelectingMultipleTasksToFalse} />
+          changeStateSelectingMultipleTasksToFalse={changeStateSelectingMultipleTasksToFalse}
+          isRemoving={tasksUi[taskKey].isRemoving} />
       )
     });
   };
