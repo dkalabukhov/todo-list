@@ -21,8 +21,13 @@
   }
 }
 
-.todo-item_finished {
+.todo-item_finished-anim {
   animation: finished 0.25s ease-in-out forwards;
+}
+
+.todo-item_finished {
+  background-color: #214921;
+  color: #fff;
 }
 
 .todo-item_finished .todo-item__grid-item {
@@ -69,7 +74,7 @@
 
 @keyframes finished {
   from {
-    background-color: #fff;
+    background-color: var(--page-bg);
     color: #000;
   }
 

@@ -183,17 +183,33 @@ export default function TodoList() {
   };
 
   // Функция, которая помечает таск как выполненный
-  const handleMakingTaskDone = (id) => () => {
-    setState((prevState) => ({
-      ...prevState,
-      tasksUi: {
-        ...prevState.tasksUi,
-        [id]: {
-          ...prevState.tasksUi[id],
-          isFinished: !prevState.tasksUi[id].isFinished
+  const handleMakingTaskDone = (id, target) => {
+    if (!state.tasksUi[id].isFinished) {
+      target.classList.add('todo-item_finished-anim');
+      setTimeout(() => {
+        target.classList.remove('todo-item_finished-anim');
+        setState((prevState) => ({
+          ...prevState,
+          tasksUi: {
+            ...prevState.tasksUi,
+            [id]: {
+              ...prevState.tasksUi[id],
+              isFinished: !prevState.tasksUi[id].isFinished
+            }
+          }
+        }))}, 300);
+    } else {
+      setState((prevState) => ({
+        ...prevState,
+        tasksUi: {
+          ...prevState.tasksUi,
+          [id]: {
+            ...prevState.tasksUi[id],
+            isFinished: !prevState.tasksUi[id].isFinished
+          }
         }
-      }
-    }));
+      }));
+    }
   };
 
   // Функция помечает таск как удаляемый

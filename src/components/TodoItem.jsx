@@ -20,7 +20,7 @@ export default function TodoItem({ name, description, deadline, id, handleMaking
 
   return (
     <div className={todoItemClasses}>
-      <button className='btn btn_gap btn_flex-start todo-item__grid-item no-decoration' onClick={handleMakingTaskDone(id)}>
+      <button className='btn btn_gap btn_flex-start todo-item__grid-item no-decoration' onClick={(e) => handleMakingTaskDone(id, e.target.closest('.todo-item'))}>
         {isFinished
           ?
             <>
