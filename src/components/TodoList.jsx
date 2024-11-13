@@ -10,8 +10,8 @@ import SeacrhInput from "./SearchInput";
 import isSeacrhStringMatches from "../utils/isSearchStringMatches";
 import SelectDeadline from "./SelectDeadline";
 import { showAllDeadlines, isTodayDeadline, isTomorrowDeadline, isThisWeekDeadline } from "../utils/showDeadlines";
-import DeleteModal from "./DeleteModal";
 import ThemeChanger from "./ThemeChanger";
+import useConfirm from "./ConfirmDialog";
 
 const initialState = {
   tasksUi: {},
@@ -25,8 +25,6 @@ const initialState = {
   typeTasks: 'all',
   selectedDeadline: 'all',
   isSelectingMultipleTasks: false,
-  isDeleteModalOpen: false,
-  idToDelete: null,
   isDarkThemeEnabled: false,
   isAdding: false,
 }
@@ -38,6 +36,9 @@ export default function TodoList() {
 
   const [state, setState] = useState(stateToUse);
 
+  // Используем контекст, передающий сеттер модального окна
+  const confirmDialog = useConfirm();
+
   const {
     formValues,
     tasks,
@@ -46,8 +47,6 @@ export default function TodoList() {
     typeTasks,
     selectedDeadline,
     isSelectingMultipleTasks,
-    isDeleteModalOpen,
-    idToDelete,
     isDarkThemeEnabled,
     isAdding,
   } = state;
@@ -219,8 +218,7 @@ export default function TodoList() {
   };
 
   // Функция помечает таск как удаляемый
-  const markTaskAsRemoving = () => {
-    const id = idToDelete;
+  const markTaskAsRemoving = (id) => {
     setState((prevState) => ({
       ...prevState,
       tasksUi: {
@@ -247,32 +245,24 @@ export default function TodoList() {
     }));
   };
 
-  // Функция, которая удаляет таск и закрывает модальное окно
-  const handleRemovingTask = () => {
-    const id = idToDelete;
-    handleCloseModal();
-    markTaskAsRemoving();
-    setTimeout(() =>
-      setState((prevState) => ({
-        ...prevState,
-        tasksUi: {
-          ...prevState.tasksUi,
-          [id]: null,
-        },
-        tasks: {
-          ...prevState.tasks,
-          [id]: null,
-        }
-      })), 500);
-  };
-
-  // Функция, которая показывает модальное окно для удаления
-  const handleOpenDeleteModal = (id) => () => {
-    setState((prevState) => ({
-      ...prevState,
-      isDeleteModalOpen: true,
-      idToDelete: id,
-    }));
+  // Функция, которая удаляет таск
+  const handleRemovingTask = (id) => async () => {
+    const choice = await confirmDialog();
+    if (choice) {
+      markTaskAsRemoving(id);
+      setTimeout(() =>
+        setState((prevState) => ({
+          ...prevState,
+          tasksUi: {
+            ...prevState.tasksUi,
+            [id]: null,
+          },
+          tasks: {
+            ...prevState.tasks,
+            [id]: null,
+          }
+        })), 500);
+    }
   };
 
   // Функция, которая устанавливает значение флага isEditing как true
@@ -411,8 +401,8 @@ export default function TodoList() {
           changeStateSelectingMultipleTasksToTrue={changeStateSelectingMultipleTasksToTrue}
           changeStateSelectingMultipleTasksToFalse={changeStateSelectingMultipleTasksToFalse}
           handleMakingTaskDone={handleMakingTaskDone}
-          handleOpenDeleteModal={handleOpenDeleteModal}
           handleEditingTask={handleEditingTask}
+          handleRemovingTask={handleRemovingTask}
           isRemoving={tasksUi[taskKey].isRemoving}
           isDescriptionShown={tasksUi[taskKey].isDescriptionShown}
           setIsDescriptionShown={setIsDescriptionShown}  />
@@ -457,8 +447,8 @@ export default function TodoList() {
           changeStateSelectingMultipleTasksToTrue={changeStateSelectingMultipleTasksToTrue}
           changeStateSelectingMultipleTasksToFalse={changeStateSelectingMultipleTasksToFalse}
           handleMakingTaskDone={handleMakingTaskDone}
-          handleOpenDeleteModal={handleOpenDeleteModal}
           handleEditingTask={handleEditingTask}
+          handleRemovingTask={handleRemovingTask}
           isRemoving={tasksUi[taskKey].isRemoving}
           isDescriptionShown={tasksUi[taskKey].isDescriptionShown}
           setIsDescriptionShown={setIsDescriptionShown}  />
@@ -500,8 +490,8 @@ export default function TodoList() {
           deadline={tasks[taskKey].deadline}
           isEditing={tasksUi[taskKey].isEditing}
           handleMakingTaskDone={handleMakingTaskDone}
-          handleOpenDeleteModal={handleOpenDeleteModal}
           handleEditingTask={handleEditingTask}
+          handleRemovingTask={handleRemovingTask}
           handleSelectingTask={handleSelectingTask}
           isChecked={tasksUi[taskKey].isSelected}
           changeStateSelectingMultipleTasksToTrue={changeStateSelectingMultipleTasksToTrue}
@@ -553,37 +543,34 @@ export default function TodoList() {
   };
 
   // Функция удаляет несколько тасков
-  const handleDeletingMultipleTasks = () => {
-    const keys = _.keys(tasksUi);
-    const idsToDelete = keys.reduce((acc, key) => {
-      if (tasksUi[key]?.isSelected === true) {
-        acc.push(key);
-      }
-      return acc;
-    }, []);
-    idsToDelete.forEach((id) => {
-      setState((prevState) => ({
-        ...prevState,
-        tasksUi: {
-          ...prevState.tasksUi,
-          [id]: null,
-        },
-        tasks: {
-          ...prevState.tasks,
-          [id]: null,
+  const handleDeletingMultipleTasks = async () => {
+    const choice = await confirmDialog();
+    if (choice) {
+      const keys = _.keys(tasksUi);
+      const idsToDelete = keys.reduce((acc, key) => {
+        if (tasksUi[key]?.isSelected === true) {
+          acc.push(key);
         }
-      }));
-    });
+        return acc;
+      }, []);
+      idsToDelete.forEach((id) => {
+        markTaskAsRemoving(id);
+        setTimeout(() => {
+          setState((prevState) => ({
+            ...prevState,
+            tasksUi: {
+              ...prevState.tasksUi,
+              [id]: null,
+            },
+            tasks: {
+              ...prevState.tasks,
+              [id]: null,
+            }
+          }));
+        }, 500);
+      });
+    }
   };
-
-  // Функция, которая закрывает модальное окно и ставит флагу idToDelete значение null
-  const handleCloseModal = () => {
-    setState((prevState) => ({
-      ...prevState,
-      isDeleteModalOpen: false,
-      idToDelete: null,
-    }));
-  }
 
   // Объект для диспетчиризации по ключу: вызов функции рендеринга тасков в зависимости
   // от выбранного типа тасков в state
@@ -634,7 +621,6 @@ export default function TodoList() {
           {mappingTypes[typeTasks]()}
         </div>
       </div>
-    {isDeleteModalOpen && <DeleteModal handleRemovingTask={handleRemovingTask} handleCloseModal={handleCloseModal} /> }
     </>
   )
 }
