@@ -326,7 +326,8 @@ export default function TodoList() {
   };
 
   // Функция, которая помечает таск как "выбранный"
-  const handleSelectingTask = (id) => () => {
+  const handleSelectingTask = (id) => {
+    setTimeout(() => {
     setState((prevState) => ({
       ...prevState,
       tasksUi: {
@@ -336,7 +337,7 @@ export default function TodoList() {
           isSelected: !prevState.tasksUi[id].isSelected,
         }
       }
-    }));
+    }))}, 200);
   };
 
   // Функция, которая ставит флаг isSelectingMultipleTasks как true

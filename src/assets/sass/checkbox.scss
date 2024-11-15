@@ -23,6 +23,10 @@
     align-items: center;
   }
 
+  &__control_checked {
+    animation: 0.2s ease-out pulse;
+  }
+
   &__icon {
     display: none;
   }
@@ -33,12 +37,9 @@
   }
 }
 
-
-
 .checkbox__input:checked ~ .checkbox__state .checkbox__control {
   border-color: blue;
   background-color: blue;
-  animation: 0.3s ease-out pulse;
 }
 
 .checkbox__input:checked ~ .checkbox__state .checkbox__icon {
