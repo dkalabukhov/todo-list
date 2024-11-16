@@ -66,9 +66,9 @@ export default function TodoList() {
     const keys = _.keys(tasksUi);
     const isAnySelectedTasks = keys.some((key) => tasksUi[key]?.isSelected === true);
     if (isAnySelectedTasks) {
-      changeStateSelectingMultipleTasksToTrue();
+      setIsSelectingMultipleTasks(true);
     } else {
-      changeStateSelectingMultipleTasksToFalse();
+      setIsSelectingMultipleTasks(false);
     }
   }, [tasksUi]);
 
@@ -246,7 +246,7 @@ export default function TodoList() {
   };
 
   // Функция, которая удаляет таск
-  const handleRemovingTask = (id) => async () => {
+  const handleDeletingTask = (id) => async () => {
     const choice = await confirmDialog();
     if (choice) {
       markTaskAsRemoving(id);
@@ -327,32 +327,37 @@ export default function TodoList() {
 
   // Функция, которая помечает таск как "выбранный"
   const handleSelectingTask = (id) => {
-    setTimeout(() => {
-    setState((prevState) => ({
-      ...prevState,
-      tasksUi: {
-        ...prevState.tasksUi,
-        [id]: {
-          ...prevState.tasksUi[id],
-          isSelected: !prevState.tasksUi[id].isSelected,
+    if (!tasksUi[id].isSelected) {
+      setTimeout(() => {
+      setState((prevState) => ({
+        ...prevState,
+        tasksUi: {
+          ...prevState.tasksUi,
+          [id]: {
+            ...prevState.tasksUi[id],
+            isSelected: !prevState.tasksUi[id].isSelected,
+          }
         }
-      }
-    }))}, 200);
+      }))}, 200);
+   } else {
+      setState((prevState) => ({
+        ...prevState,
+        tasksUi: {
+          ...prevState.tasksUi,
+          [id]: {
+            ...prevState.tasksUi[id],
+            isSelected: !prevState.tasksUi[id].isSelected,
+          }
+        }
+      }));
+    }
   };
 
-  // Функция, которая ставит флаг isSelectingMultipleTasks как true
-  const changeStateSelectingMultipleTasksToTrue = () => {
+  // Сеттер значения выбора нескольких тасков
+  const setIsSelectingMultipleTasks = (value) => {
     setState((prevState) => ({
       ...prevState,
-      isSelectingMultipleTasks: true,
-    }));
-  };
-
-  // Функция, которая ставит флаг isSelectingMultipleTasks как false
-  const changeStateSelectingMultipleTasksToFalse = () => {
-    setState((prevState) => ({
-      ...prevState,
-      isSelectingMultipleTasks: false,
+      isSelectingMultipleTasks: value,
     }));
   };
 
@@ -418,11 +423,9 @@ export default function TodoList() {
           deadline={tasks[taskKey].deadline}
           isChecked={tasksUi[taskKey].isSelected}
           handleSelectingTask={handleSelectingTask}
-          changeStateSelectingMultipleTasksToTrue={changeStateSelectingMultipleTasksToTrue}
-          changeStateSelectingMultipleTasksToFalse={changeStateSelectingMultipleTasksToFalse}
           handleMakingTaskDone={handleMakingTaskDone}
           handleEditingTask={handleEditingTask}
-          handleRemovingTask={handleRemovingTask}
+          handleDeletingTask={handleDeletingTask}
           isRemoving={tasksUi[taskKey].isRemoving}
           isDescriptionShown={tasksUi[taskKey].isDescriptionShown}
           setIsDescriptionShown={setIsDescriptionShown}  />
@@ -500,46 +503,44 @@ export default function TodoList() {
   };
 
   return (
-    <>
-      <div className="todo-list">
-        <div className="todo-list__container">
-          <h1 className="todo-list__heading">TODO-list</h1>
-          <ThemeChanger toggleTheme={toggleTheme} isDarkThemeEnabled={isDarkThemeEnabled} />
-          {isAnyTasks &&
-            <div className="filters">
-              <div className="radios">
-                <RadioButton handleOptionChange={handleOptionChange} name="radio" value="all" title="All" typeTasks={typeTasks} />
-                <RadioButton handleOptionChange={handleOptionChange} name="radio" value="finished" title="Finished" typeTasks={typeTasks} />
-                <RadioButton handleOptionChange={handleOptionChange} name="radio" value="unfinished" title="Not Finished" typeTasks={typeTasks} />
-              </div>
-              <SelectDeadline
-                selectedDeadline={selectedDeadline}
-                handleUserSelectDeadline={handleUserSelectDeadline} />
-              <SeacrhInput searchInput={searchInput} handleUserSearchInput={handleUserSearchInput} />
+    <div className="todo-list">
+      <div className="todo-list__container">
+        <h1 className="todo-list__heading">TODO-list</h1>
+        <ThemeChanger toggleTheme={toggleTheme} isDarkThemeEnabled={isDarkThemeEnabled} />
+        {isAnyTasks &&
+          <div className="filters">
+            <div className="radios">
+              <RadioButton handleOptionChange={handleOptionChange} name="radio" value="all" title="All" typeTasks={typeTasks} />
+              <RadioButton handleOptionChange={handleOptionChange} name="radio" value="finished" title="Finished" typeTasks={typeTasks} />
+              <RadioButton handleOptionChange={handleOptionChange} name="radio" value="unfinished" title="Not Finished" typeTasks={typeTasks} />
             </div>
-          }
-          {isSelectingMultipleTasks &&
-              <div className="buttons-group">
-                <button onClick={handleDeletingMultipleTasks} className="btn btn_submit btn_small">
-                  <span>Delete Selected</span>
-                </button>
-                <button onClick={handleMarkingMultipleTasksDone} className="btn btn_submit btn_small">
-                  <span>Mark Selected As Done</span>
-                </button>
-              </div>
-          }
-          <AddNewTaskButton isAdding={isAdding} handleAddingTask={handleAddingTask} />
-          {isAdding &&
-            <TodoCreateForm
-              handleUserInput={handleUserInput}
-              handleUserPickingDeadline={handleUserPickingDeadline}
-              formValues={formValues}
-              handleUserSubmitForm={hadnleUserSubmitForm}
-              handleCancelAddingTask={handleCancelAddingTask} />
-          }
-          {renderTasks()}
-        </div>
+            <SelectDeadline
+              selectedDeadline={selectedDeadline}
+              handleUserSelectDeadline={handleUserSelectDeadline} />
+            <SeacrhInput searchInput={searchInput} handleUserSearchInput={handleUserSearchInput} />
+          </div>
+        }
+        {isSelectingMultipleTasks &&
+            <div className="buttons-group">
+              <button onClick={handleDeletingMultipleTasks} className="btn btn_submit btn_small">
+                <span>Delete Selected</span>
+              </button>
+              <button onClick={handleMarkingMultipleTasksDone} className="btn btn_submit btn_small">
+                <span>Mark Selected As Done</span>
+              </button>
+            </div>
+        }
+        <AddNewTaskButton isAdding={isAdding} handleAddingTask={handleAddingTask} />
+        {isAdding &&
+          <TodoCreateForm
+            handleUserInput={handleUserInput}
+            handleUserPickingDeadline={handleUserPickingDeadline}
+            formValues={formValues}
+            handleUserSubmitForm={hadnleUserSubmitForm}
+            handleCancelAddingTask={handleCancelAddingTask} />
+        }
+        {renderTasks()}
       </div>
-    </>
+    </div>
   )
 }
