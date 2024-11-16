@@ -366,17 +366,36 @@ export default function TodoList() {
     thisWeek: (deadline) => isThisWeekDeadline(deadline),
   };
 
-  // Рендер всех тасков
-  const renderAllItems = () => {
-    const keys = _.keys(tasks);
-    return keys.map((taskKey) => {
-      if (_.isNull(tasks[taskKey])) return null;
+  // Фильтрация тасков
+  const filterTasks = (keys) => {
+    return keys.filter((taskKey) => {
+      if (_.isNull(tasks[taskKey])) return false;
       if (searchInput.trim() !== '') {
         if (!isSeacrhStringMatches(tasks[taskKey].name, tasks[taskKey].description, searchInput)) {
-          return null;
+          return false;
         }
       }
-      if (!mappingDeadlies[selectedDeadline](tasks[taskKey].deadline)) return null;
+      if (!mappingDeadlies[selectedDeadline](tasks[taskKey].deadline)) return false;
+      switch(typeTasks) {
+        case 'finished':
+          if (!tasksUi[taskKey].isFinished) return false;
+          break;
+        case 'unfinished':
+          if (tasksUi[taskKey].isFinished) return false;
+          break;
+        default:
+          break;
+      }
+
+      return true;
+    })
+  }
+
+  // Рендер тасков
+  const renderTasks = () => {
+    const keys = _.keys(tasks);
+    const filteredKeys = filterTasks(keys)
+    return filteredKeys.map((taskKey) => {
       if (tasksUi[taskKey].isEditing) {
         return (
           <TodoEditForm
@@ -410,99 +429,6 @@ export default function TodoList() {
       )
     });
   }
-
-  // Рендер только выполненных тасков
-  const renderFinishedItems = () => {
-    const keys = _.keys(tasks);
-    return keys.map((taskKey) => {
-      if (_.isNull(tasks[taskKey])) return null;
-      if (!tasksUi[taskKey].isFinished) return null;
-      if (searchInput.trim() !== '') {
-        if (!isSeacrhStringMatches(tasks[taskKey].name, tasks[taskKey].description, searchInput)) {
-          return null;
-        }
-      }
-      if (!mappingDeadlies[selectedDeadline](tasks[taskKey].deadline)) return null;
-      if (tasksUi[taskKey].isEditing) {
-        return (
-          <TodoEditForm
-            key={_.uniqueId()}
-            name={tasks[taskKey].name}
-            description={tasks[taskKey].description}
-            deadline={tasks[taskKey].deadline}
-            handleCancelEditingItem={handleCancelEditingItem}
-            handleEditingItem={handleEditingItem}
-            id={taskKey}/>
-        );
-      }
-      return (
-        <TodoItem
-          key={_.uniqueId()}
-          id={taskKey}
-          isFinished={tasksUi[taskKey].isFinished}
-          name={tasks[taskKey].name}
-          description={tasks[taskKey].description}
-          deadline={tasks[taskKey].deadline}
-          handleSelectingTask={handleSelectingTask}
-          isChecked={tasksUi[taskKey].isSelected}
-          changeStateSelectingMultipleTasksToTrue={changeStateSelectingMultipleTasksToTrue}
-          changeStateSelectingMultipleTasksToFalse={changeStateSelectingMultipleTasksToFalse}
-          handleMakingTaskDone={handleMakingTaskDone}
-          handleEditingTask={handleEditingTask}
-          handleRemovingTask={handleRemovingTask}
-          isRemoving={tasksUi[taskKey].isRemoving}
-          isDescriptionShown={tasksUi[taskKey].isDescriptionShown}
-          setIsDescriptionShown={setIsDescriptionShown}  />
-      )
-    });
-  }
-
-  // Рендер только не завершенных тасков
-  const renderUnfinishedItems = () => {
-    const keys = _.keys(tasks);
-    return keys.map((taskKey) => {
-      if (_.isNull(tasks[taskKey])) return null;
-      if (tasksUi[taskKey].isFinished) return null;
-      if (searchInput.trim() !== '') {
-        if (!isSeacrhStringMatches(tasks[taskKey].name, tasks[taskKey].description, searchInput)) {
-          return null;
-        }
-      }
-      if (!mappingDeadlies[selectedDeadline](tasks[taskKey].deadline)) return null;
-      if (tasksUi[taskKey].isEditing) {
-        return (
-          <TodoEditForm
-            key={_.uniqueId()}
-            name={tasks[taskKey].name}
-            description={tasks[taskKey].description}
-            deadline={tasks[taskKey].deadline}
-            handleCancelEditingItem={handleCancelEditingItem}
-            handleEditingItem={handleEditingItem}
-            id={taskKey}/>
-        );
-      }
-      return (
-        <TodoItem
-          key={_.uniqueId()}
-          id={taskKey}
-          isFinished={tasksUi[taskKey].isFinished}
-          name={tasks[taskKey].name}
-          description={tasks[taskKey].description}
-          deadline={tasks[taskKey].deadline}
-          isEditing={tasksUi[taskKey].isEditing}
-          handleMakingTaskDone={handleMakingTaskDone}
-          handleEditingTask={handleEditingTask}
-          handleRemovingTask={handleRemovingTask}
-          handleSelectingTask={handleSelectingTask}
-          isChecked={tasksUi[taskKey].isSelected}
-          changeStateSelectingMultipleTasksToTrue={changeStateSelectingMultipleTasksToTrue}
-          changeStateSelectingMultipleTasksToFalse={changeStateSelectingMultipleTasksToFalse}
-          isRemoving={tasksUi[taskKey].isRemoving}
-          isDescriptionShown={tasksUi[taskKey].isDescriptionShown}
-          setIsDescriptionShown={setIsDescriptionShown}   />
-      )
-    });
-  };
 
   // Функция записывает в state значения поля поиска по таскам
   const handleUserSearchInput = (e) => {
@@ -573,14 +499,6 @@ export default function TodoList() {
     }
   };
 
-  // Объект для диспетчиризации по ключу: вызов функции рендеринга тасков в зависимости
-  // от выбранного типа тасков в state
-  const mappingTypes = {
-    all: renderAllItems,
-    finished: renderFinishedItems,
-    unfinished: renderUnfinishedItems,
-  };
-
   return (
     <>
       <div className="todo-list">
@@ -619,7 +537,7 @@ export default function TodoList() {
               handleUserSubmitForm={hadnleUserSubmitForm}
               handleCancelAddingTask={handleCancelAddingTask} />
           }
-          {mappingTypes[typeTasks]()}
+          {renderTasks()}
         </div>
       </div>
     </>
