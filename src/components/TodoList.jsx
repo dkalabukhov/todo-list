@@ -461,9 +461,10 @@ export default function TodoList() {
           [id]: {
             ...prevState.tasksUi[id],
             isFinished: true,
+            isSelected: false,
           }
         }
-      }))
+      }));
     });
   };
 
