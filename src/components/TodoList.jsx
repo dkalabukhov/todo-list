@@ -1,17 +1,17 @@
 import { useEffect, useState } from "react";
-import AddNewTaskButton from "./AddNewTaskButton";
+import AddNewTaskButton from "./UI/AddNewTaskButton";
 import TodoCreateForm from "./TodoCreateForm";
 import dayjs from "dayjs";
 import _ from "lodash";
 import TodoItem from "./TodoItem";
 import TodoEditForm from "./TodoEditForm";
-import RadioButton from "./RadioButton";
-import SeacrhInput from "./SearchInput";
+import RadioButton from "./UI/RadioButton";
+import SeacrhInput from "./UI/SearchInput";
 import isSeacrhStringMatches from "../utils/isSearchStringMatches";
-import SelectDeadline from "./SelectDeadline";
+import SelectDeadline from "./UI/SelectDeadline";
 import { showAllDeadlines, isTodayDeadline, isTomorrowDeadline, isThisWeekDeadline } from "../utils/showDeadlines";
-import ThemeChanger from "./ThemeChanger";
-import useConfirm from "./ConfirmDialog";
+import ThemeChanger from "./UI/ThemeChanger";
+import useConfirm from "./modal/ConfirmDialog";
 
 const initialState = {
   tasksUi: {},
@@ -153,7 +153,7 @@ export default function TodoList() {
 
   // Функция, которая создает новый таск, очищает инпуты, и ставит флагу isAdding
   // значение false
-  const hadnleUserSubmitForm = (e) => {
+  const handleUserSubmitForm = (e) => {
     e.preventDefault();
     const id = _.uniqueId();
     setState((prevState) => ({
@@ -171,6 +171,7 @@ export default function TodoList() {
       tasks: {
         ...prevState.tasks,
         [id]: {
+          id,
           name,
           description,
           deadline,
@@ -283,11 +284,13 @@ export default function TodoList() {
   // Функция которая редактирует информацию таска и ставит флаг isEditing как false
   const handleEditingItem = (data, id) => {
     const { editName, editDescription, editDeadline} = data;
+    console.log(id);
     setState((prevState) => ({
       ...prevState,
       tasks: {
         ...prevState.tasks,
         [id]: {
+          ...prevState.tasks[id],
           name: editName,
           description: editDescription,
           deadline: editDeadline,
@@ -405,29 +408,21 @@ export default function TodoList() {
         return (
           <TodoEditForm
             key={_.uniqueId()}
-            name={tasks[taskKey].name}
-            description={tasks[taskKey].description}
-            deadline={tasks[taskKey].deadline}
+            task={tasks[taskKey]}
             handleCancelEditingItem={handleCancelEditingItem}
             handleEditingItem={handleEditingItem}
-            id={taskKey}/>
+          />
         );
       }
       return (
         <TodoItem
           key={_.uniqueId()}
-          id={taskKey}
-          isFinished={tasksUi[taskKey].isFinished}
-          name={tasks[taskKey].name}
-          description={tasks[taskKey].description}
-          deadline={tasks[taskKey].deadline}
-          isChecked={tasksUi[taskKey].isSelected}
+          task={tasks[taskKey]}
+          taskUi={tasksUi[taskKey]}
           handleSelectingTask={handleSelectingTask}
           handleMakingTaskDone={handleMakingTaskDone}
           handleEditingTask={handleEditingTask}
           handleDeletingTask={handleDeletingTask}
-          isRemoving={tasksUi[taskKey].isRemoving}
-          isDescriptionShown={tasksUi[taskKey].isDescriptionShown}
           setIsDescriptionShown={setIsDescriptionShown}  />
       )
     });
@@ -536,7 +531,7 @@ export default function TodoList() {
             handleUserInput={handleUserInput}
             handleUserPickingDeadline={handleUserPickingDeadline}
             formValues={formValues}
-            handleUserSubmitForm={hadnleUserSubmitForm}
+            handleUserSubmitForm={handleUserSubmitForm}
             handleCancelAddingTask={handleCancelAddingTask} />
         }
         {renderTasks()}

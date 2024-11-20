@@ -3,7 +3,9 @@ import dayjs from "dayjs";
 import { useState } from "react";
 import _ from 'lodash';
 
-export default function TodoEditForm({ name, description, deadline, id, handleEditingItem, handleCancelEditingItem }) {
+export default function TodoEditForm({ task, handleEditingItem, handleCancelEditingItem }) {
+  const {name, description, deadline, id} = task;
+
   const initialState = {
     editName: name,
     editDescription: description,

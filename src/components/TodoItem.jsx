@@ -1,21 +1,18 @@
 import cn from 'classnames';
 import dayjs from 'dayjs';
-import Checkbox from './Checkbox';
+import Checkbox from './UI/Checkbox';
 
 export default function TodoItem({
-  name,
-  description,
-  deadline,
-  id,
+  task,
+  taskUi,
   handleMakingTaskDone,
   handleDeletingTask,
-  isFinished,
   handleEditingTask,
   handleSelectingTask,
-  isChecked,
-  isRemoving,
-  isDescriptionShown,
   setIsDescriptionShown }) {
+
+  const { name, description, deadline, id } = task;
+  const { isFinished, isRemoving, isSelected, isDescriptionShown } = taskUi;
   const todoItemClasses = cn('todo-item', {
     'todo-item_finished': isFinished,
     'todo-item_overdue': deadline < dayjs().format('YYYY-MM-DD'),
@@ -30,17 +27,17 @@ export default function TodoItem({
         {isFinished
           ?
             <>
-              <span>Make Unfinished</span>
               <svg className="todo-item__icon" viewBox="0 0 512 512" xmlSpace="preserve" xmlns="http://www.w3.org/2000/svg" xmlnsXlink="http://www.w3.org/1999/xlink">
                 <path d="M256,7C118.467,7,7,118.468,7,256.002C7,393.533,118.467,505,256,505s249-111.467,249-248.998  C505,118.468,393.533,7,256,7z M256,485.08c-126.31,0-229.08-102.771-229.08-229.078C26.92,129.692,129.69,26.92,256,26.92  c126.309,0,229.08,102.771,229.08,229.082C485.08,382.309,382.309,485.08,256,485.08z" fill="currentColor"/><polygon fill="currentColor" points="368.545,157.073 354.461,142.988 255.863,241.587 157.733,143.456 143.648,157.54 241.78,255.672   143.648,353.809 157.733,367.893 255.863,269.75 354.461,368.361 368.545,354.275 269.947,255.672 "/>
               </svg>
+              <span>Make Unfinished</span>
             </>
           :
             <>
-              <span>Make Done</span>
               <svg className="todo-item__icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
                 <path d="M9 16.2l-4.2-4.2-1.4 1.4 5.6 5.6 12-12-1.4-1.4z" fill="currentColor"/>
               </svg>
+              <span>Make Done</span>
             </>
         }
       </button>
@@ -55,7 +52,7 @@ export default function TodoItem({
       }
       <span className='todo-item__grid-item'>{deadline}</span>
       <div className='buttons-group todo-item__grid-item'>
-        <Checkbox isChecked={isChecked} id={id} handleSelectingTask={handleSelectingTask} />
+        <Checkbox isChecked={isSelected} id={id} handleSelectingTask={handleSelectingTask} />
         <button onClick={handleEditingTask(id)}>
           <svg className='todo-item__icon' fill="none" height="24" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" viewBox="0 0 24 24" width="24" xmlns="http://www.w3.org/2000/svg">
             <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/>
