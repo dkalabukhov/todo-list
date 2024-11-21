@@ -22,8 +22,8 @@ export default function TodoItem({
   const cuttedDescription = description.slice(0, 2) + '...';
 
   return (
-    <div className={todoItemClasses}>
-      <button className='btn btn_gap btn_flex-start todo-item__grid-item no-decoration' onClick={(e) => handleMakingTaskDone(id, e.target.closest('.todo-item'))}>
+    <div id={`task-${id}`} className={todoItemClasses}>
+      <button className='btn btn_gap btn_flex-start todo-item__grid-item no-decoration' onClick={() => handleMakingTaskDone(id)}>
         {isFinished
           ?
             <>

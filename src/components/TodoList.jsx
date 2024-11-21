@@ -189,8 +189,9 @@ export default function TodoList() {
   };
 
   // Функция, которая помечает таск как выполненный
-  const handleMakingTaskDone = (id, target) => {
+  const handleMakingTaskDone = (id) => {
     if (!state.tasksUi[id].isFinished) {
+      const target = document.querySelector(`#task-${id}`);
       target.classList.add('todo-item_finished-anim');
       setTimeout(() => {
         target.classList.remove('todo-item_finished-anim');
@@ -454,17 +455,23 @@ export default function TodoList() {
       return acc;
     }, []);
     idsToUpdate.forEach((id) => {
-      setState((prevState) => ({
-        ...prevState,
-        tasksUi: {
-          ...prevState.tasksUi,
-          [id]: {
-            ...prevState.tasksUi[id],
-            isFinished: true,
-            isSelected: false,
+      const target = document.querySelector(`#task-${id}`);
+      if (!target.classList.contains('todo-item_finished')) {
+        target.classList.add('todo-item_finished-anim');
+      }
+      setTimeout(() => {
+        setState((prevState) => ({
+          ...prevState,
+          tasksUi: {
+            ...prevState.tasksUi,
+            [id]: {
+              ...prevState.tasksUi[id],
+              isFinished: true,
+              isSelected: false,
+            }
           }
-        }
-      }));
+        }));
+      }, 300);
     });
   };
 
